@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>加拿大教育考察行程工作人員檢查清單</title>
+    <style>
+        body {
+            font-family: "Microsoft JhengHei", Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 10px;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 20px;
+            font-size: 1.1em;
+        }
+        .section {
+            margin-bottom: 30px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            background-color: #f9f9f9;
+        }
+        .section-title {
+            font-size: 1.3em;
+            margin-top: 0;
+            color: white;
+            background-color: #3498db;
+            padding: 8px 15px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .task-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .task-item {
+            padding: 10px;
+            margin-bottom: 5px;
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            background-color: white;
+            border-left: 3px solid #3498db;
+        }
+        .task-item:hover {
+            background-color: #f0f7ff;
+        }
+        .task-checkbox {
+            margin-right: 10px;
+            transform: scale(1.3);
+        }
+        .task-label {
+            flex: 1;
+        }
+        .date-display {
+            text-align: center;
+            font-size: 1.2em;
+            margin-bottom: 5px;
+            background-color: #2c3e50;
+            color: white;
+            padding: 10px;
+            border-radius: 5px 5px 0 0;
+        }
+        .trip-day {
+            text-align: center;
+            font-size: 1.1em;
+            margin-bottom: 20px;
+            background-color: #34495e;
+            color: white;
+            padding: 8px;
+            border-radius: 0 0 5px 5px;
+        }
+        .trip-day span {
+            font-weight: bold;
+            color: #f1c40f;
+        }
+        .date-container {
+            margin-bottom: 20px;
+        }
+        .reset-btn {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.8em;
+            margin-right: 10px;
+        }
+        .reset-btn:hover {
+            background-color: #c0392b;
+        }
+        .day-btn {
+            background-color: #2980b9;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.8em;
+            margin: 0 3px;
+            min-width: 30px;
+        }
+        .day-btn:hover {
+            background-color: #3498db;
+        }
+        .day-btn.active {
+            background-color: #f39c12;
+            font-weight: bold;
+        }
+        .completed {
+            background-color: #e8f8f5;
+            text-decoration: line-through;
+            color: #777;
+            border-left: 3px solid #2ecc71;
+        }
+        .progress-container {
+            margin-bottom: 20px;
+        }
+        .progress-bar {
+            height: 20px;
+            background-color: #ecf0f1;
+            border-radius: 10px;
+            margin-bottom: 5px;
+            overflow: hidden;
+        }
+        .progress {
+            height: 100%;
+            background-color: #2ecc71;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        .progress-text {
+            text-align: center;
+            font-weight: bold;
+        }
+        .collapse-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2em;
+            cursor: pointer;
+        }
+        .section-content {
+            transition: max-height 0.3s ease;
+            overflow: hidden;
+            max-height: 1000px;
+        }
+        .collapsed .section-content {
+            max-height: 0;
+        }
+        .day-selector {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+        .buttons-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+        }
+        @media print {
+            .reset-btn, .collapse-btn, .day-btn, .day-selector {
+                display: none;
+            }
+            .section {
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+            body {
+                background-color: white;
+            }
+            .container {
+                box-shadow: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>加拿大教育考察行程工作人員檢查清單</h1>
+        <div class="subtitle">參訪時間：2025/4/21(Day1) 至 2025/5/2(Day12)</div>
+        
+        <div class="date-container">
+            <div class="date-display" id="currentDate"></div>
+            <div class="trip-day" id="tripDay">今天是考察團 <span id="dayNumber">-</span></div>
+        </div>
+        
+        <div class="day-selector">
+            <button class="day-btn" data-day="0">全部</button>
+            <button class="day-btn" data-day="1">Day1</button>
+            <button class="day-btn" data-day="2">Day2</button>
+            <button class="day-btn" data-day="3">Day3</button>
+            <button class="day-btn" data-day="4">Day4</button>
+            <button class="day-btn" data-day="5">Day5</button>
+            <button class="day-btn" data-day="6">Day6</button>
+            <button class="day-btn" data-day="7">Day7</button>
+            <button class="day-btn" data-day="8">Day8</button>
+            <button class="day-btn" data-day="9">Day9</button>
+            <button class="day-btn" data-day="10">Day10</button>
+            <button class="day-btn" data-day="11">Day11</button>
+            <button class="day-btn" data-day="12">Day12</button>
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress" id="progressBar"></div>
+            </div>
+            <div class="progress-text" id="progressText">0%</div>
+        </div>
+        
+        <div class="section" id="section1">
+            <h2 class="section-title">
+                行前準備
+                <button class="collapse-btn" data-section="section1Content">−</button>
+            </h2>
+            <div class="section-content" id="section1Content">
+                <ul class="task-list">
+                    <li class="task-item">
+                        <input type="checkbox" class="task-checkbox" id="task1">
+                        <label class="task-label" for="task1">與妍欣約時間領取及打包禮品（出發前1天星期五前）</label>
+                    </li>
+                    <li class="task-item">
+                        <input type="checkbox" class="task-checkbox" id="task2">
+                        <label class="task-label" for="task2">準備1大提袋供攜帶當日禮品</label>
+                    </li>
+                    <li class="task-item">
+                        <input type="checkbox" class="task-checkbox" id="task3">
+                        <label class="task-label" for="task3">使用達鎂旅行社提供的綠色行李綁帶（出國禮品專用行李箱）</label>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="section" id="section2">
+            <h2 class="section-title">
+                出發當日
+                <button class="collapse-btn" data-section="section2Content">−</button>
+            </h2>
+            <div class="section-content" id="section2Content">
+                <ul class="task-list">
+                    <li class="task-item">
+                        <input type="checkbox" class="task-checkbox" id="task4">
+                        <label class="task-label" for="task4">確認接駁車司機電話及車牌號碼（前一日下午3-4點左右會提供）</label>
+                    </li>
+                    <li class="task-item">
+                        <input type="checkbox" class="task-checkbox" id="task5">
+                        <label class="task-label" for="task5">搭乘接駁車（上下車地點為本部濟南路側門）</label>
+                    </li>
+                    <li class="task-item">
+                        <input type="checkbox" class="task-checkbox" id="task6">
+                        <label class="task-label" for="task6">確認接駁地點是否有調整</label>
+                    </li>
+                    <li class="task-item">
+                        <input type="checkbox" class="task-checkbox" id="task7">
+                        <label class="task-label" for="task7">在各接駁點安排小天使協助確認人員到齊</label>
+                    </li>
+                    <li class="task-item">
+                        <input type="checkbox" class="task-checkbox" id="task8">
+                        <label class="task-label" for="task8">發放加拿大網路卡（1張/人）</label>
+                    </li>
+                    <li class="task-item">
+                        <input type="checkbox" class="task-checkbox" id="task9">
+                        <label class="task-label" for="task9">發放識別證（1個/人）</label>
+                    </li>
+                    <li class="task-item">
+                        <input type="checkbox" class="task-checkbox" id="task10">
+                        <label class="task-label" for="task10">發放行李吊牌（1個/人）</label>
+                    </li>
+                    <li class="task-item">
+                        <input type="checkbox" class="task-checkbox" id="task11">
+                        <label class="task-label" for="task11">發放導覽耳機（1組/人）</label>
+                    </li>
+                    <li class="task-item">
+                        <input type="checkbox" class="task-checkbox" id="task12">
+                        <label class="task-label" for="task12">辦完登機手續後歸還護照及登機證</label>
+                    </li>
+                    <li class="task-item">
+                        <input type="checkbox" class="task-checkbox" id="task13">
+                        <label class="task-label" for="task13">發放手冊及行李綁條給未參加說明會者</label>
+                    </li>
+                    <li class="task-item">
+                        <input type="checkbox" class="task-checkbox" id="task14">
+                        <label class="task-label" for="task14">將拍照布條交給隊長/副隊長保管</label>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="section" id="section3">
+            <h2 class="section-title">
+                參訪前一日
+                <button class="collapse-btn" data-section="section3Content">−</button>
+            </h2>
+            <div class="section-content" id="section3Content">
+                <ul class="task-list">
+                    <li class="task-item">
+                        <input type="checkbox" class="task-checkbox" id="task15">
+                        <label class="task-label" for="task15">晚餐時提醒老師隔日參訪行程需著正式服飾</label>
+                    </li>
+                    <li class="task-item">
+                        <input type="checkbox" class="task-checkbox" id="task16">
+                        <label class="task-label" for="task16">確認次日參訪禮品是否在隨身大提袋內</label>
+                    </li>
+                    <li class="task-item">
+                        <input type="checkbox" class="task-checkbox" id="task17">
+                        <label class="task-label" for="task17">確認小便利貼已註記贈禮對象</label>
+                    </li>
+                    <li class="task-item">
+                        <input type="checkbox" class="task-checkbox" id="task18">
+                        <label class="task-label" for="task18">確認教育部文宣贈禮準備情況</label>
+                    </li>
+                    <li class="task-item">
+                        <input type="checkbox" class="task-checkbox" id="task19">
+                        <label class="task-label" for="task19">準備拍照用布條</label>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="section" id="section4">
+            <h2 class="section-title">
+                參訪當日
+                <button class="collapse-btn" data-section="section4Content">−</button>
+            </h2>
+            <div class="section-content" id="section4Content">
+                <ul class="task-list">
+                    <li class="task-item">
+                        <input type="checkbox" class="task-checkbox" id="task20">
+                        <label class="task-label" for="task20">隨身攜帶參訪贈禮及備用禮品</label>
+                    </li>
+                    <li class="task-item">
+                        <input type="checkbox" class="task-checkbox" id="task21">
+                        <label class="task-label" for="task21">安排適合時間及地點拍攝團體照</label>
+                    </li>
+                    <li class="task-item">
+                        <input type="checkbox" class="task-checkbox" id="task22">
+                        <label class="task-label" for="task22">團體照時記得拉布條</label>
+                    </li>
+                    <li class="task-item">
+                        <input type="checkbox" class="task-checkbox" id="task23">
+                        <label class="task-label" for="task23">確認口譯人員已就位（依參訪單位不同）</label>
+                    </li>
+                    <li class="task-item">
+                        <input type="checkbox" class="task-checkbox" id="task24">
+                        <label class="task-label" for="task24">協助教師依參訪學校要求進行分組</label>
+                    </li>
+                    <li class="task-item">
+                        <input type="checkbox" class="task-checkbox" id="task25">
+                        <label class="task-label" for="task25">確保各組儘可能安排6項報告任務分工成員</label>
+                    </li>
+                    <li class="task-item">
+                        <input type="checkbox" class="task-checkbox" id="task26">
+                        <label class="task-label" for="task26">與教育組組長妥善分工陪同團長、副團長</label>
+                    </li>
+                    <li class="task-item">
+                        <input type="checkbox" class="task-checkbox" id="task27">
+                        <label class="task-label" for="task27">提醒老師入班觀課切勿打擾學生上課</label>
+                    </li>
+                    <li class="task-item">
+                        <input type="checkbox" class="task-checkbox" id="task28">
+                        <label class="task-label" for="task28">提醒團員於公共場合降低音量</label>
+                    </li>
+                    <li class="task-item">
+                        <input type="checkbox" class="task-checkbox" id="task29">
+                        <label class="task-label" for="task29">提醒團員行進間以6小隊為單位移動，切勿脫隊</label>
+                    </li>
+                    <li class="task-item">
+                        <input type="checkbox" class="task-checkbox" id="task30">
+                        <label class="task-label" for="task30">記錄特別事項及突發狀況以利交接</label>
+                    </li>
+                    <li class="task-item">
+                        <input type="checkbox" class="task-checkbox" id="task31">
+                        <label class="task-label" for="task31">撰寫「每日驗收紀錄表」</label>
+                    </li>
+                    <li class="task-item">
+                        <input type="checkbox" class="task-checkbox" id="task32">
+                        <label class="task-label" for="task32">請團長簽名確認每日驗收紀錄表</label>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="section" id="section5">
+            <h2 class="section-title">
+                Day9特別事項
+                <button class="collapse-btn" data-section="section5Content">−</button>
+            </h2>
+            <div class="section-content" id="section5Content">
+                <ul class="task-list">
+                    <li class="task-item">
+                        <input type="checkbox" class="task-checkbox" id="task33">
+                        <label class="task-label" for="task33">提醒團員晚上8時有租借會議室供討論報告使用</label>
+                    </li>
+                    <li class="task-item">
+                        <input type="checkbox" class="task-checkbox" id="task34">
+                        <label class="task-label" for="task34">提醒每位老師須寫心得提供資料組彙整</label>
+                    </li>
+                    <li class="task-item">
+                        <input type="checkbox" class="task-checkbox" id="task35">
+                        <label class="task-label" for="task35">與資料組組長約定報告繳交時間</label>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="section" id="section6">
+            <h2 class="section-title">
+                回國當日
+                <button class="collapse-btn" data-section="section6Content">−</button>
+            </h2>
+            <div class="section-content" id="section6Content">
+                <ul class="task-list">
+                    <li class="task-item">
+                        <input type="checkbox" class="task-checkbox" id="task36">
+                        <label class="task-label" for="task36">提醒老師填寫線上問卷（手冊附件8，掃描QR code）</label>
+                    </li>
+                    <li class="task-item">
+                        <input type="checkbox" class="task-checkbox" id="task37">
+                        <label class="task-label" for="task37">確認搭乘接駁車人數</label>
+                    </li>
+                    <li class="task-item">
+                        <input type="checkbox" class="task-checkbox" id="task38">
+                        <label class="task-label" for="task38">壓車返回教育部（濟南路）</label>
+                    </li>
+                    <li class="task-item">
+                        <input type="checkbox" class="task-checkbox" id="task39">
+                        <label class="task-label" for="task39">收取團長、副團長機票票根（工作人員交旅行社核銷）</label>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="section" id="section7">
+            <h2 class="section-title">
+                回國後（第1梯次：4/21-5/2）
+                <button class="collapse-btn" data-section="section7Content">−</button>
+            </h2>
+            <div class="section-content" id="section7Content">
+                <ul class="task-list">
+                    <li class="task-item">
+                        <input type="checkbox" class="task-checkbox" id="task40">
+                        <label class="task-label" for="task40">代擬團長序，經團長核閱後併入考察報告</label>
+                    </li>
+                    <li class="task-item">
+                        <input type="checkbox" class="task-checkbox" id="task41">
+                        <label class="task-label" for="task41">確認團員於6/2前繳交報告（回國30日內）</label>
+                    </li>
+                    <li class="task-item">
+                        <input type="checkbox" class="task-checkbox" id="task42">
+                        <label class="task-label" for="task42">於6/16前完成簽出（繳交後2週內，須簽至1層）</label>
+                    </li>
+                    <li class="task-item">
+                        <input type="checkbox" class="task-checkbox" id="task43">
+                        <label class="task-label" for="task43">於7/16前完成核定上傳（回國75日內）</label>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="section" id="section8">
+            <h2 class="section-title">
+                其他重要事項
+                <button class="collapse-btn" data-section="section8Content">−</button>
+            </h2>
+            <div class="section-content" id="section8Content">
+                <ul class="task-list">
+                    <li class="task-item">
+                        <input type="checkbox" class="task-checkbox" id="task44">
+                        <label class="task-label" for="task44">出國報告管理系統登入檢查（帳號密碼已於3/13由綜規司馬小姐寄送）</label>
+                    </li>
+                    <li class="task-item">
+                        <input type="checkbox" class="task-checkbox" id="task45">
+                        <label class="task-label" for="task45">出國報告管理網址：<a href="https://report.ndc.gov.tw/reportwork" target="_blank">https://report.ndc.gov.tw/reportwork</a></label>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="buttons-container">
+            <button id="resetAll" class="reset-btn">重設所有項目</button>
+            <button id="saveData" class="day-btn">匯出資料</button>
+            <button id="loadData" class="day-btn">匯入資料</button>
+        </div>
+    </div>
+
+    <script>
+        // 全局任務數據對象
+        const taskData = {
+            tasks: {},
+            days: {
+                1: [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], // Day1 - 出發當日
+                2: [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32], // Day2-8 - 參訪當日
+                3: [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32], // Day3
+                4: [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32], // Day4
+                5: [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32], // Day5
+                6: [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32], // Day6
+                7: [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32], // Day7
+                8: [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32], // Day8
+                9: [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35], // Day9 - 特別事項
+                10: [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32], // Day10
+                11: [15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32], // Day11
+                12: [36, 37, 38, 39] // Day12 - 回國當日
+            },
+            sections: {
+                1: [1, 2, 3], // 行前準備
+                2: [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14], // 出發當日
+                3: [15, 16, 17, 18, 19], // 參訪前一日
+                4: [20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32], // 參訪當日
+                5: [33, 34, 35], // Day9特別事項
+                6: [36, 37, 38, 39], // 回國當日
+                7: [40, 41, 42, 43], // 回國後
+                8: [44, 45] // 其他重要事項
+            }
+        };
+        
+        // 顯示當前日期與行程天數
+        function updateDate() {
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('currentDate').textContent = now.toLocaleDateString('zh-TW', options);
+            
+            // 計算目前是第幾天行程
+            const startDate = new Date(2025, 3, 21); // 2025年4月21日，月份是0-based
+            const endDate = new Date(2025, 4, 2);   // 2025年5月2日
+            
+            const dayElement = document.getElementById('dayNumber');
+            const tripDayElement = document.getElementById('tripDay');
+            
+            if (now < startDate) {
+                dayElement.textContent = "尚未開始";
+                tripDayElement.innerHTML = "行程尚未開始，距離出發還有 <span>" + Math.ceil((startDate - now) / (1000 * 60 * 60 * 24)) + "</span> 天";
+            } else if (now > endDate) {
+                dayElement.textContent = "已結束";
+                tripDayElement.innerHTML = "行程已結束，距離結束已經 <span>" + Math.ceil((now - endDate) / (1000 * 60 * 60 * 24)) + "</span> 天";
+            } else {
+                const dayDiff = Math.ceil((now - startDate) / (1000 * 60 * 60 * 24));
+                dayElement.textContent = "Day" + dayDiff;
+                
+                // 高亮顯示當前天數按鈕
+                document.querySelectorAll('.day-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                document.querySelector(`.day-btn[data-day="${dayDiff}"]`).classList.add('active');
+                
+                // 自動篩選當天任務
+                filterTasksByDay(dayDiff);
+            }
+        }
+        
+        // 更新進度條
+        function updateProgress() {
+            const visibleCheckboxes = document.querySelectorAll('.task-item:not([style*="display: none"]) .task-checkbox');
+            const totalTasks = visibleCheckboxes.length;
+            let completedTasks = 0;
+            
+            visibleCheckboxes.forEach(checkbox => {
+                if (checkbox.checked) {
+                    completedTasks++;
+                    checkbox.parentElement.classList.add('completed');
+                } else {
+                    checkbox.parentElement.classList.remove('completed');
+                }
+            });
+            
+            const progressPercent = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+            document.getElementById('progressBar').style.width = progressPercent + '%';
+            document.getElementById('progressText').textContent = progressPercent + '% 完成';
+        }
+        
+        // 根據天數篩選任務
+        function filterTasksByDay(day) {
+            if (day === 0) {
+                // 顯示所有任務
+                document.querySelectorAll('.task-item').forEach(item => {
+                    item.style.display = '';
+                });
+            } else {
+                // 只顯示該天相關任務
+                const relevantTasks = taskData.days[day] || [];
+                
+                document.querySelectorAll('.task-item').forEach(item => {
+                    const taskId = parseInt(item.querySelector('.task-checkbox').id.replace('task', ''));
+                    if (relevantTasks.includes(taskId)) {
+                        item.style.display = '';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            }
+            
+            // 更新進度條
+            updateProgress();
+        }
+        
+        // 保存和加載已完成的任務
+        function saveTaskState() {
+            const checkboxes = document.querySelectorAll('.task-checkbox');
+            const taskState = {};
+            
+            checkboxes.forEach(checkbox => {
+                taskState[checkbox.id] = checkbox.checked;
+            });
+            
+            localStorage.setItem('canadaEducationTripTasks', JSON.stringify(taskState));
+        }
+        
+        function loadTaskState() {
+            const savedState = localStorage.getItem('canadaEducationTripTasks');
+            
+            if (savedState) {
+                const taskState = JSON.parse(savedState);
+                
+                Object.keys(taskState).forEach(id => {
+                    const checkbox = document.getElementById(id);
+                    if (checkbox) {
+                        checkbox.checked = taskState[id];
+                        if (taskState[id]) {
+                            checkbox.parentElement.classList.add('completed');
+                        }
+                    }
+                });
+                
+                updateProgress();
+            }
+        }
+        
+        // 匯出數據
+        function exportData() {
+            const checkboxes = document.querySelectorAll('.task-checkbox');
+            const exportData = {};
+            
+            checkboxes.forEach(checkbox => {
+                exportData[checkbox.id] = checkbox.checked;
+            });
+            
+            const dataStr = JSON.stringify(exportData);
+            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+            
+            const exportFileDefaultName = 'canada_trip_checklist_' + new Date().toISOString().slice(0,10) + '.json';
+            
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+        }
+        
+        // 匯入數據
+        function importData() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            
+            input.onchange = e => {
+                const file = e.target.files[0];
+                const reader = new FileReader();
+                
+                reader.onload = function(event) {
+                    try {
+                        const taskState = JSON.parse(event.target.result);
+                        
+                        Object.keys(taskState).forEach(id => {
+                            const checkbox = document.getElementById(id);
+                            if (checkbox) {
+                                checkbox.checked = taskState[id];
+                                if (taskState[id]) {
+                                    checkbox.parentElement.classList.add('completed');
+                                } else {
+                                    checkbox.parentElement.classList.remove('completed');
+                                }
+                            }
+                        });
+                        
+                        updateProgress();
+                        saveTaskState();
+                        alert('資料匯入成功！');
+                    } catch (e) {
+                        alert('匯入失敗，檔案格式不正確：' + e.message);
+                    }
+                };
+                
+                reader.readAsText(file);
+            };
+            
+            input.click();
+        }
+        
+        // 重設所有項目
+        document.getElementById('resetAll').addEventListener('click', function() {
+            if (confirm('確定要重設所有項目嗎？')) {
+                const checkboxes = document.querySelectorAll('.task-checkbox');
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = false;
+                    checkbox.parentElement.classList.remove('completed');
+                });
+                
+                updateProgress();
+                saveTaskState();
+            }
+        });
+        
+        // 匯出資料
+        document.getElementById('saveData').addEventListener('click', exportData);
+        
+        // 匯入資料
+        document.getElementById('loadData').addEventListener('click', importData);
+        
+        // 折疊/展開區段
+        document.querySelectorAll('.collapse-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const sectionContentId = this.getAttribute('data-section');
+                const sectionElement = document.getElementById(sectionContentId).parentElement;
+                
+                if (sectionElement.classList.contains('collapsed')) {
+                    sectionElement.classList.remove('collapsed');
+                    this.textContent = '−';
+                } else {
+                    sectionElement.classList.add('collapsed');
+                    this.textContent = '+';
+                }
+            });
+        });
+        
+        // 天數選擇按鈕
+        document.querySelectorAll('.day-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const day = parseInt(this.getAttribute('data-day'));
+                
+                // 更新按鈕樣式
+                document.querySelectorAll('.day-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                this.classList.add('active');
+                
+                // 篩選任務
+                filterTasksByDay(day);
+            });
+        });
+        
+        // 點擊任務項目事件監聽
+        document.querySelectorAll('.task-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                if (this.checked) {
+                    this.parentElement.classList.add('completed');
+                } else {
+                    this.parentElement.classList.remove('completed');
+                }
+                
+                updateProgress();
+                saveTaskState();
+            });
+        });
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            updateDate();
+            loadTaskState();
+            
+            // 每分鐘更新一次日期，以防用戶長時間保持頁面開啟
+            setInterval(updateDate, 60000);
+        })
+    </script>
+</body>
+</html>
